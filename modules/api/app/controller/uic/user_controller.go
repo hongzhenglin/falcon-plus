@@ -227,7 +227,7 @@ func GetUser(c *gin.Context) {
 	}
 	fuser := uic.User{ID: int64(uid)}
 	if dt := db.Uic.Table("user").Find(&fuser); dt.Error != nil {
-		h.JSONR(c, http.StatusExpectationFailed, dt.Error)
+		h.JSONR(c, http.StatusInternalServerError, dt.Error)
 		return
 	}
 	h.JSONR(c, fuser)
@@ -293,7 +293,10 @@ func IsUserInTeams(c *gin.Context) {
 		h.JSONR(c, http.StatusExpectationFailed, dt.Error)
 		return
 	}
-
+	if len(tus) == 0 {
+		h.JSONR(c, "false")
+		return
+	}
 	h.JSONR(c, "true")
 	return
 }
@@ -533,6 +536,7 @@ func ChangeRoleOfUser(c *gin.Context) {
 		h.JSONR(c, http.StatusExpectationFailed, dt.Error)
 		return
 	}
+	//TODO: fix me of type
 	h.JSONR(c, fmt.Sprintf("user role update sccuessful, affect row: %v", dt.RowsAffected))
 	return
 }
